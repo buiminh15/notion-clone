@@ -1,10 +1,21 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { ChevronsLeft, MenuIcon } from 'lucide-react'
+import { ChevronsLeft, MenuIcon, Plus, PlusCircle, Search, Settings, Trash } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import React, { ElementRef, useEffect, useRef, useState } from 'react'
 import { useMediaQuery } from 'usehooks-ts'
+import UserItem from './user-item'
+import { useQuery, useMutation } from 'convex/react'
+
+import { api } from '@/convex/_generated/api'
+import Item from './item'
+
+import { toast } from 'sonner'
+import DocumentList from './document-list'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import TrashBox from './trash-box'
+import { useSearch } from '@/hooks'
 
 function Navigation() {
   const isMobile = useMediaQuery('(max-width: 768px)')
@@ -16,6 +27,10 @@ function Navigation() {
 
   const [isResetting, setIsResetting] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
+
+  const search = useSearch()
+
+  const create = useMutation(api.documents.create)
 
   useEffect(() => {
     if (isMobile) {
@@ -93,6 +108,16 @@ function Navigation() {
     }
   }
 
+  const handleCreate = () => {
+    const promise = create({ title: 'Untitled' })
+
+    toast.promise(promise, {
+      loading: 'Creating a new note...',
+      success: 'New note created!',
+      error: 'Failed to create new note'
+    })
+  }
+
   return (
     <>
       <aside ref={sidebarRef} className={cn('group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-[9999]',
@@ -109,11 +134,40 @@ function Navigation() {
           <ChevronsLeft className="h-6 w-6" />
         </div>
         <div>
-          <p>Action items</p>
+          <UserItem />
+          <Item
+            onClick={search.onOpen}
+            label="Search"
+            icon={Search}
+            isSearch
+          />
+          <Item
+            onClick={handleCreate}
+            label="Settings"
+            icon={Settings}
+          />
+          <Item
+            onClick={handleCreate}
+            label="New Page"
+            icon={PlusCircle}
+          />
         </div>
 
         <div className='mt-4'>
-          <p>Documents</p>
+          <DocumentList />
+          <Item
+            onClick={handleCreate}
+            icon={Plus}
+            label='Add a page'
+          />
+          <Popover>
+            <PopoverTrigger className='w-full nt-4'>
+              <Item label='Trash' icon={Trash} />
+            </PopoverTrigger>
+            <PopoverContent className='p-0 w-72' side={isMobile ? "bottom" : "right"}>
+              <TrashBox />
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div onMouseDown={handleMouseDown} onClick={resetWidth} className='opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute w-1 h-full bg-primary/10 right-0 top-0' />
