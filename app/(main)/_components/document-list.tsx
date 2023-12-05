@@ -31,7 +31,6 @@ function DocumentList(props: DocumentListProps) {
       [documentId]: !prevExpanded[documentId]
     }))
   }
-  console.log('📢 [document-list.tsx:34]', expanded);
   const onRedirect = (documentId: string) => {
     router.push(`/documents/${documentId}`)
   }
