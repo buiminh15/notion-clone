@@ -17,7 +17,7 @@ function SearchCommand() {
   const toggle = useSearch(store => store.toggle)
   const isOpen = useSearch(store => store.isOpen)
   const onClose = useSearch(store => store.onClose)
-
+  console.log('📢 [search-command.tsx:20]', documents);
   useEffect(() => {
     setIsMounted(true)
   }, [])

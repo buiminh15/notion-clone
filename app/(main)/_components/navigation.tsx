@@ -15,7 +15,7 @@ import { toast } from 'sonner'
 import DocumentList from './document-list'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import TrashBox from './trash-box'
-import { useSearch } from '@/hooks'
+import { useSearch, useSettings } from '@/hooks'
 
 function Navigation() {
   const isMobile = useMediaQuery('(max-width: 768px)')
@@ -29,6 +29,7 @@ function Navigation() {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   const search = useSearch()
+  const settings = useSettings()
 
   const create = useMutation(api.documents.create)
 
@@ -142,7 +143,7 @@ function Navigation() {
             isSearch
           />
           <Item
-            onClick={handleCreate}
+            onClick={settings.onOpen}
             label="Settings"
             icon={Settings}
           />
