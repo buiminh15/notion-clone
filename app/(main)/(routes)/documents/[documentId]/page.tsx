@@ -5,20 +5,38 @@ import { Toolbar } from '@/components/toolbar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
-import { useQuery } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import React from 'react'
+import dynamic from 'next/dynamic'
 
 interface DocumentIdPageProps {
   params: {
     documentId: Id<'documents'>
   }
-
 }
+
+const DynamicEditor = dynamic(() => import('@/components/editor'), {
+  ssr: false,
+  loading: () => <div className='pl-[54px]'>
+    <Skeleton className="h-14 w-full" />
+  </div>,
+})
+
 
 function DocumentIdPage({ params: { documentId } }: DocumentIdPageProps) {
   const document = useQuery(api.documents.getById, {
     documentId
   })
+
+  const update = useMutation(api.documents.update);
+
+  const onChange = (content: string) => {
+    update({
+      id: documentId,
+      content
+    });
+  };
+
 
   if (document === undefined) {
     return (
@@ -47,6 +65,8 @@ function DocumentIdPage({ params: { documentId } }: DocumentIdPageProps) {
         <Toolbar
           initialData={document}
         />
+        <DynamicEditor onChange={onChange}
+          initialContent={document.content} />
       </div>
     </div>
   )
