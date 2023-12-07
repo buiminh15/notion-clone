@@ -4,8 +4,7 @@ import { useTheme } from "next-themes";
 import {
   BlockNoteEditor,
 } from "@blocknote/core";
-import { useBlockNote } from "@blocknote/react";
-import { BlockNoteView } from '../node_modules/@blocknote/react/src/index'
+import { BlockNoteView, useBlockNote } from "@blocknote/react";
 import "@blocknote/core/style.css";
 
 import { useEdgeStore } from "@/lib/edgestore";
